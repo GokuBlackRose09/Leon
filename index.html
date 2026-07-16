@@ -12,7 +12,7 @@
         h2 { color: #ff6b6b; }
         .section { padding: 80px 0; }
         .about { background:#1a1a1a; }
-        .works { background:#111; display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:20px; }
+        .works-grid { background:#111; display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; }
         .work-card { background:#222; border-radius:12px; overflow:hidden; }
         .work-card img { width:100%; height:300px; object-fit:cover; }
         .skills { background:#1a1a1a; }
@@ -38,10 +38,10 @@
         </div>
     </section>
 
-    <section class="section works">
+    <section class="section">
         <div class="container">
             <h2>作品展示</h2>
-            <div class="works">
+            <div class="works-grid">
 
                 <div class="work-card">
                     <img src="Raiden.jpg" alt="Raiden Cosplay">
