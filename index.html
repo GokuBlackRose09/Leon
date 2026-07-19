@@ -19,12 +19,37 @@
         ul { list-style:none; padding:0; display:flex; flex-wrap:wrap; gap:15px; }
         li { background:#333; padding:10px 20px; border-radius:30px; }
         footer { text-align:center; padding:40px; background:#000; }
-        
+
+        /* Download button styles */
+        .download-btn {
+            display:inline-block;
+            margin-left:12px;
+            color:#111;
+            background:#ffd166;
+            padding:10px 20px;
+            border-radius:50px;
+            text-decoration:none;
+            font-weight:700;
+            border:none;
+            cursor:pointer;
+            box-shadow:0 4px 10px rgba(0,0,0,0.3);
+            transition:transform .12s ease;
+            vertical-align:middle;
+        }
+        .download-btn:active { transform:translateY(1px); }
+        .download-btn[disabled] { opacity:0.7; cursor:not-allowed; transform:none; }
+
         @media (max-width: 768px) {
             .works-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 480px) {
             .works-grid { grid-template-columns: 1fr; }
+            header { height: auto; padding: 60px 0; }
+        }
+
+        /* Optional: avoid button showing in printed output if browser print fallback used */
+        @media print {
+            .download-btn { display:none !important; }
         }
     </style>
 </head>
@@ -34,7 +59,10 @@
         <div class="container">
             <h1>Leon Lee</h1>
             <p style="font-size:1.8rem; margin:15px 0;">人像攝影師</p>
-            <a href="https://www.instagram.com/thisav_for_me.0531" target="_blank" style="color:white; background:#ff6b6b; padding:12px 30px; border-radius:50px; text-decoration:none; font-weight:bold;">Instagram @thisav_for_me.0531</a>
+            <div style="display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
+                <a href="https://www.instagram.com/thisav_for_me.0531" target="_blank" style="color:white; background:#ff6b6b; padding:12px 30px; border-radius:50px; text-decoration:none; font-weight:bold;">Instagram @thisav_for_me.0531</a>
+                <button id="downloadPdf" class="download-btn" title="下載 PDF">Download PDF</button>
+            </div>
         </div>
     </header>
 
@@ -122,5 +150,56 @@
         <p>Leon Lee © 2026 | <a href="https://www.instagram.com/thisav_for_me.0531" style="color:#ff6b6b;">Instagram</a></p>
     </footer>
 
+    <!-- html2pdf (bundled) from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script>
+        (function () {
+            const btn = document.getElementById('downloadPdf');
+
+            btn.addEventListener('click', function () {
+                const filename = 'Leon_Lee_Portfolio.pdf';
+                // Options - adjust scale/margins to improve quality
+                const opt = {
+                    margin: 0.5, // inches
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+
+                // Hide the button during capture so it doesn't appear in the PDF
+                btn.style.display = 'none';
+                btn.disabled = true;
+                const originalText = btn.textContent;
+                // Provide user feedback
+                const feedback = document.createElement('div');
+                feedback.id = 'pdfFeedback';
+                feedback.style.position = 'fixed';
+                feedback.style.top = '12px';
+                feedback.style.right = '12px';
+                feedback.style.background = '#222';
+                feedback.style.color = '#fff';
+                feedback.style.padding = '8px 12px';
+                feedback.style.borderRadius = '8px';
+                feedback.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+                feedback.textContent = 'Preparing PDF...';
+                document.body.appendChild(feedback);
+
+                // Use the whole body for PDF. If you want only the main content, target a different element.
+                html2pdf().set(opt).from(document.body).save().then(() => {
+                    // done
+                }).catch((err) => {
+                    console.error('PDF generation error:', err);
+                    alert('PDF 產生失敗，請檢查瀏覽器控制台或嘗試重新整理頁面後重試。');
+                }).finally(() => {
+                    // restore button
+                    btn.style.display = '';
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                    if (feedback && feedback.parentNode) feedback.parentNode.removeChild(feedback);
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
